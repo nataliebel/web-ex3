@@ -1,0 +1,61 @@
+﻿
+@{
+    ViewBag.Title = "save";
+}
+
+<body background="~/export-map-share.png" style="background-size:100% 100%; background-attachment:fixed">
+    <canvas id="myCanvas" style="border:1px;">
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+        <script>
+            var canvas = document.getElementById("myCanvas");
+    canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+            var ctx = canvas.getContext("2d")
+            var prevLon = undefined;
+            var prevLat = undefined;
+            var lon = undefined;
+            var lat = undefined;
+            var start = Date.now();
+            function drawLine(startX,startY,endX,endY) {
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            }
+            function drawPoint() {
+                ctx.beginPath();
+                ctx.arc(parseFloat(lon), parseFloat(lat), 5, 10, 20 * Math.PI, false);
+                ctx.fillStyle = "Red";
+                ctx.fill();
+            }
+            var time =@Session["time"]* 1000;
+            var duration =@Session["duration"]* 1000;
+            setDrawing = (function () {
+                $.post("@Url.Action("WriteToFile")").done(function (xml) {
+                    var xmlDoc = $.parseXML(xml);
+                    $xml = $(xmlDoc);
+                    lon =   ((parseFloat($xml.find("Lon").text()) + 180)/360) * window.innerWidth;
+                    lat =  ((parseFloat($xml.find("Lat").text()) + 90)/180)* window.innerHeight ;
+                    drawPoint();
+                    if (prevLat != undefined && prevLon != undefined) {
+                       drawLine(prevLon, prevLat, lon, lat);
+                    }
+                    prevLon = lon;
+                    prevLat = lat;
+                })
+            });
+            timeOut = (function () {
+                clearInterval(interval);
+                alert("done");
+            });
+             setTimeout(timeOut, duration);
+            var interval= setInterval(setDrawing, time);
+            setDrawing();
+        </script>
+    </canvas>
+</body>
+
+
+
+
+

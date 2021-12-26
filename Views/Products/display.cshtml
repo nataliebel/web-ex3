@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "display";
+}
+  
+    <body background="~/export-map-share.png" style="background-size:100% 100%; background-attachment:fixed">
+        <canvas id="myCanvas" style="border:1px;">
+          <script>
+              var canvas = document.getElementById("myCanvas");
+              canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+              var ctx = canvas.getContext("2d");
+              var lon = ((parseFloat(@ViewBag.lon) + 180)/360) * window.innerWidth;
+              var lat = ((parseFloat(@ViewBag.lat) + 90)/180)* window.innerHeight ;
+              function drawPoint(){
+                  ctx.beginPath();
+                  ctx.arc(parseFloat(lon), parseFloat(lat), 5, 10, 20 * Math.PI, false);
+                  ctx.fillStyle = "Red";
+                  ctx.fill();
+              }
+              drawPoint();
+          </script>
+        </canvas>
+    </body>
+
+  
+
+
